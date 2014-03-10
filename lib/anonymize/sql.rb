@@ -22,7 +22,15 @@ class Anonymize::SQL
 
   def process_table(table, data)
     columns = data[:columns]
-    rows = @connection.query("SELECT * FROM #{table}")
+    conditions = data[:options].delete(:conditions)
+
+    query = if conditions
+              "SELECT * FROM #{table} WHERE #{conditions}"
+            else
+              "SELECT * FROM #{table}"
+            end
+
+    rows = @connection.query(query)
     pbar = ProgressBar.create(:format => '%a %B %c of %C', :total => rows.count) if @options[:progress]
     rows.each do |row|
       tuples = {}
