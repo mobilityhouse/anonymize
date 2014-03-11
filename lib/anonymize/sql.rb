@@ -22,13 +22,17 @@ class Anonymize::SQL
 
   def process_table(table, data)
     columns = data[:columns]
+
+    joins = data[:options].delete(:joins)
     conditions = data[:options].delete(:conditions)
 
-    query = if conditions
-              "SELECT * FROM #{table} WHERE #{conditions}"
+    query = if joins
+              "SELECT * FROM #{table} #{joins}"
             else
               "SELECT * FROM #{table}"
             end
+
+    query = "#{query} WHERE #{conditions}" if conditions
 
     rows = @connection.query(query)
     pbar = ProgressBar.create(:format => '%a %B %c of %C', :total => rows.count) if @options[:progress]
