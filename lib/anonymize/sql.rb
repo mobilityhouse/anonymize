@@ -27,7 +27,7 @@ class Anonymize::SQL
     conditions = data[:options].delete(:conditions)
 
     query = if joins
-              "SELECT * FROM #{table} #{joins}"
+              "SELECT #{table}.* FROM #{table} #{joins}"
             else
               "SELECT * FROM #{table}"
             end
